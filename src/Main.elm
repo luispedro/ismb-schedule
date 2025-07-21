@@ -9,6 +9,8 @@ import Http
 import Task
 import Time
 import Url.Builder
+import Url
+import Dict exposing (Dict)
 import Html exposing (Html)
 import Html.Attributes as HtmlAttr
 import Html.Events as HE
@@ -114,8 +116,33 @@ initFilters talks =
     , talks = talks
     }
 
+applyUrlFilters : Url.Url -> FilterSet -> FilterSet
+applyUrlFilters url fset =
+    case url.query of
+        Nothing -> fset
+        Just q ->
+            let
+                pairs : Dict String String
+                pairs =
+                    q
+                        |> String.split "&"
+                        |> List.filterMap (\p ->
+                            case String.split "=" p of
+                                [k,v] ->
+                                    Url.percentDecode v |> Maybe.withDefault v |> \val -> Just (k, val)
+                                [k] -> Just (k, "")
+                                _ -> Nothing
+                        )
+                        |> Dict.fromList
+            in
+            { fset
+                | speaker = Dict.get "speaker" pairs |> Maybe.withDefault fset.speaker
+                , title = Dict.get "title" pairs |> Maybe.withDefault fset.title
+                , abstract = Dict.get "abstract" pairs |> Maybe.withDefault fset.abstract
+            }
+
 type Model =
-    Loading
+    Loading Url.Url
     | LoadFailed String
     | ShowTalks FilterSet
 
@@ -125,17 +152,19 @@ main = let
             { url = "ISMB_2025_All_sessions.json"
             , expect = Http.expectJson GotData (J.list decodeTalk)
             }
-    in Browser.document
-        { init = \() -> (Loading, getTalks)
+    in Browser.application
+        { init = \() url _ -> (Loading url, getTalks)
         , update = update
         , subscriptions = \model -> case model of
-            Loading -> Sub.none
+            Loading _ -> Sub.none
             LoadFailed _ -> Sub.none
             ShowTalks m -> Sub.batch
                                 [ Dropdown.subscriptions m.sessionFilterState SessionFilterChanged
                                 , Time.every (15 * 60 * 1000) CurTime -- Every fifteen minutes
                                 ]
         , view = view
+        , onUrlChange = UrlChanged
+        , onUrlRequest = \_ -> Ignore
         }
 
 type Msg =
@@ -151,11 +180,15 @@ type Msg =
     | UpdateTitleFilter String
     | UpdateSpeakerFilter String
     | UpdateAbstractFilter String
+    | UrlChanged Url.Url
+    | Ignore
 
 update msg model =
     let nmodel = case msg of
             GotData r -> case r of
-              Ok d -> ShowTalks <| initFilters d
+              Ok d -> case model of
+                    Loading url -> ShowTalks <| applyUrlFilters url (initFilters d)
+                    _ -> ShowTalks <| initFilters d
               Err err -> LoadFailed <| case err of
                 Http.BadUrl e -> "BadURL: " ++ e
                 Http.Timeout -> "TimeOut"
@@ -163,10 +196,13 @@ update msg model =
                 Http.BadStatus c -> "BadStatus: " ++ String.fromInt c
                 Http.BadBody e -> "BadBody: " ++ e
             _ -> case model of
-                Loading -> model
+                Loading url -> case msg of
+                    UrlChanged newUrl -> Loading newUrl
+                    _ -> model
                 LoadFailed err -> model
                 ShowTalks m -> case msg of
                     GotData _ -> model -- impossible, but needed to satisfy the compiler
+                    UrlChanged newUrl -> ShowTalks <| applyUrlFilters newUrl m
                     CurTime t -> if conferenceActive
                                 then ShowTalks <| adjustDays { m | now = getSimpleTime t}
                                 -- conference has passed, so time is not updated anymore
@@ -187,6 +223,7 @@ update msg model =
                     UpdateTitleFilter t -> ShowTalks { m | title = t }
                     UpdateSpeakerFilter t -> ShowTalks { m | speaker = t }
                     UpdateAbstractFilter t ->  ShowTalks { m | abstract = t }
+                    Ignore -> ShowTalks m
         cmd = case msg of
             GotData (Ok _) -> Task.perform CurTime Time.now
             _ -> Cmd.none
@@ -271,7 +308,7 @@ parseTime t =
         )
 
 viewModel model = case model of
-    Loading -> Html.text "Loading..."
+    Loading _ -> Html.text "Loading..."
     LoadFailed err -> Html.text ("Load error: " ++ err)
     ShowTalks m ->
         let
