@@ -339,7 +339,7 @@ viewModel model = case model of
                         in [Html.h4 [] [Html.text "Filter by session" ]
                             , Dropdown.dropdown
                                 m.sessionFilterState
-                                { options = [ Dropdown.alignMenuRight ]
+                                { options = [ ]
                                 , toggleMsg = SessionFilterChanged
                                 , toggleButton =
                                     Dropdown.toggle [ ] [ Html.text "Select session" ]
