@@ -73,7 +73,7 @@ getSimpleTime t =
 
     in
         { day = Time.toDay Time.utc t
-        , hour = hourUTC - 4 -- - 4 is to adjust to Quebec time
+        , hour = hourUTC - 1 -- - 4 is to adjust to Quebec time
         , min = minUTC
         , year = Time.toYear Time.utc t
         , month = Time.toMonth Time.utc t |> monthToInt
@@ -109,7 +109,7 @@ initFilters talks =
     , showFullAbstractsAll = False
     , expandAbstracts = S.empty
     , sortOrder = ByTime
-    , now = { day = 11, hour = 12, min = 0, year = 2024, month = 7}
+    , now = { day = 11, hour = 12, min = 0, year = 2025, month = 7}
     , showPastTalks = not conferenceActive
     , talks = talks
     }
@@ -122,7 +122,7 @@ type Model =
 main = let
         getTalks : Cmd Msg
         getTalks = Http.get
-            { url = "ISMB_2024_All_sessions.json"
+            { url = "ISMB_2025_All_sessions.json"
             , expect = Http.expectJson GotData (J.list decodeTalk)
             }
     in Browser.document
@@ -204,7 +204,7 @@ hasPassed t now =
     let
         (startH30, startM30) = add30mins <| parseTime t.time
     in
-        if now.year > 2024
+        if now.year > 2025
         then True
         else if now.month < 7
         then False
@@ -234,7 +234,7 @@ talkDay t = case String.split " " t of
 
 view : Model -> Browser.Document Msg
 view m =
-    { title = "ISMB 2024 - Schedule"
+    { title = "ISMB 2025 - Schedule"
     , body =
         [ CDN.stylesheet
         , CDN.fontAwesome
@@ -305,8 +305,8 @@ viewModel model = case model of
         in Grid.containerFluid [HtmlAttr.id "main"]
             [ Grid.simpleRow
                 [ Grid.col []
-                    [ Html.h1 [] [ Html.text "ISMB 2024" ]
-                    , Html.p [] [ Html.text "This is a list of all sessions at ISMB 2024."]
+                    [ Html.h1 [] [ Html.text "ISMB 2025" ]
+                    , Html.p [] [ Html.text "This is a list of all sessions at ISMB 2025."]
                     ]
                 ]
             , Grid.simpleRow
@@ -467,12 +467,12 @@ asCalendarTime day time =
         adjustTimezone : String -> String
         adjustTimezone =
             -- + 4 is to adjust for Quebec time
-            String.toInt >> Maybe.withDefault 0 >> (\t -> t + 4) >> String.fromInt >> (\t -> if String.length t == 1 then "0" ++ t else t)
+            String.toInt >> Maybe.withDefault 0 >> (\t -> t + 1) >> String.fromInt >> (\t -> if String.length t == 1 then "0" ++ t else t)
     in
     case startEnd of
         [[hourStart, minuteStart], [hourEnd, minuteEnd]] ->
             String.concat
-                [ "2024"
+                [ "2025"
                 , "07"
                 , String.fromInt dayn
                 , "T"
@@ -481,7 +481,7 @@ asCalendarTime day time =
                 , "00"
                 , "Z"
                 , "/"
-                , "2024"
+                , "2025"
                 , "07"
                 , String.fromInt dayn
                 , "T"
