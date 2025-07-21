@@ -1,8 +1,8 @@
-# ISMB 2024 Schedule
+# ISMB 2025 Schedule
 
 See live version at [https://ismb-schedule.luispedro.org/](https://ismb-schedule.luispedro.org/)
 
-This is a simple schedule for the ISMB 2024 conference. It is a static site
+This is a simple schedule for the ISMB 2025 conference. It is a static site
 
 ## Code
 
