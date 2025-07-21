@@ -73,7 +73,7 @@ getSimpleTime t =
 
     in
         { day = Time.toDay Time.utc t
-        , hour = hourUTC - 1 -- - 4 is to adjust to Quebec time
+        , hour = hourUTC + 1 -- - 4 is to adjust to Quebec time
         , min = minUTC
         , year = Time.toYear Time.utc t
         , month = Time.toMonth Time.utc t |> monthToInt
@@ -94,7 +94,7 @@ type alias FilterSet =
     , talks : List Talk
     }
 
-conferenceActive = False
+conferenceActive = True
 
 initFilters : List Talk -> FilterSet
 initFilters talks =
@@ -466,8 +466,8 @@ asCalendarTime day time =
             |> List.map (String.split ":")
         adjustTimezone : String -> String
         adjustTimezone =
-            -- + 4 is to adjust for Quebec time
-            String.toInt >> Maybe.withDefault 0 >> (\t -> t + 1) >> String.fromInt >> (\t -> if String.length t == 1 then "0" ++ t else t)
+            -- - 1 is to adjust for Montreal time
+            String.toInt >> Maybe.withDefault 0 >> (\t -> t - 1) >> String.fromInt >> (\t -> if String.length t == 1 then "0" ++ t else t)
     in
     case startEnd of
         [[hourStart, minuteStart], [hourEnd, minuteEnd]] ->
