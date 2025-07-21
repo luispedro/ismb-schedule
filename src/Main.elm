@@ -193,16 +193,16 @@ update msg model =
     in (nmodel, cmd)
 
 
-add30mins : (Int, Int) -> (Int, Int)
-add30mins (h, m) =
-    if m > 30
-    then (h + 1, m - 30)
-    else (h, m + 30)
+add15mins : (Int, Int) -> (Int, Int)
+add15mins (h, m) =
+    if m > 45
+    then (h + 1, m - 45)
+    else (h, m + 15)
 
 hasPassed : Talk -> SimpleTime -> Bool
 hasPassed t now =
     let
-        (startH30, startM30) = add30mins <| parseTime t.time
+        (startH15, startM15) = add15mins <| parseTime t.time
     in
         if now.year > 2025
         then True
@@ -212,7 +212,7 @@ hasPassed t now =
         then True
         else if talkDay t.day > now.day
         then False
-        else startH30 < now.hour || startH30 == now.hour && startM30 < now.min
+        else startH15 < now.hour || startH15 == now.hour && startM15 < now.min
 
 adjustDays : FilterSet -> FilterSet
 adjustDays m =
