@@ -428,6 +428,9 @@ viewModel model = case model of
                                             Html.text <| t.day ++ " " ++ t.time
                                             ,Html.a [ HtmlAttr.href <| createGoogleCalLink t, HtmlAttr.target "_blank" ]
                                                 [ Html.text " (add to calendar)" ]
+                                            ,Html.text " "
+                                            ,Html.a [ HtmlAttr.href <| createShareLink t, HtmlAttr.target "_blank" ]
+                                                [ Html.i [ HtmlAttr.class "fa fa-share" ] [] ]
                                             ]
                                     , Table.td [] [ Html.text t.room ]
                                     , Table.td [] [ showHits m.speaker (Maybe.withDefault "" t.speaker) ]
@@ -540,3 +543,12 @@ createGoogleCalLink talk =
         , Url.Builder.string "location" talk.room
         , Url.Builder.string "action" "TEMPLATE"
         ]
+
+createShareLink : Talk -> String
+createShareLink talk =
+    case talk.speaker of
+        Nothing -> ""
+        Just spk ->
+            Url.Builder.crossOrigin
+                "https://ismb-schedule.luispedro.org" []
+                [ Url.Builder.string "speaker" spk ]
