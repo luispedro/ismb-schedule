@@ -13,12 +13,12 @@ COLS = [
  'Title',
  'Abstract']
 
-URL = 'https://www.iscb.org/images/stories/ismb2024/document.ScheduleByTrack.ISMB.2024.xlsx'
-if not path.exists(path.basename(URL)):
-    print('Downloading file...')
-    r = requests.get(URL)
-    with open(path.basename(URL), 'wb') as f:
-        f.write(r.content)
+#URL = 'https://www.iscb.org/images/stories/ismb2024/document.ScheduleByTrack.ISMB.2024.xlsx'
+#if not path.exists(path.basename(URL)):
+#    print('Downloading file...')
+#    r = requests.get(URL)
+#    with open(path.basename(URL), 'wb') as f:
+#        f.write(r.content)
 
 timetable = pd.read_excel('ISMBECCB_2025_All_Detailed_Schedule.xlsx')
 timetable.columns = timetable.iloc[0]
@@ -39,12 +39,19 @@ timetable['Date'] = timetable['Date'].dt.strftime('%d %B')
 timetable = timetable[COLS]
 timetable = timetable.query('Track != "This Track is Used for Testing"')
 
+
 KEYNOTE_SPEAKERS = {
+        'Morning Welcome and Keynote Introduction': "-",
+        'Extending AlphaFold to make predictions across the universe of biomolecular interactions': "John Jumper",
+        'Decoding cellular systems: From observational atlases to generative interventions': "Fabian Theis",
+        'Building the future of AI-driven structure-based drug discovery': "Charlotte Deane",
+        'Computational biology in the age of AI agents': "James Zou",
+        'Plus ça change, plus c\'est la même chose': "Amos Bairoch"
         }
 
 for ix in timetable.query('Track == "Distinguished Keynotes"').index:
-    assert pd.isna(timetable.loc[ix].Speaker)
-    timetable.loc[ix, 'Speaker'] = KEYNOTE_SPEAKERS[timetable.loc[ix].Title]
+    if pd.isna(timetable.loc[ix].Speaker):
+        timetable.loc[ix, 'Speaker'] = KEYNOTE_SPEAKERS[timetable.loc[ix].Title]
 
 with open('ISMB_2025_All_sessions.json', 'wt') as out:
     timetable.to_json(
