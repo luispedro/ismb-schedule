@@ -97,6 +97,7 @@ type alias FilterSet =
     }
 
 conferenceActive = True
+baseURL = "https://ismb-schedule.luispedro.org"
 
 initFilters : List Talk -> FilterSet
 initFilters talks =
@@ -550,5 +551,5 @@ createShareLink talk =
         Nothing -> ""
         Just spk ->
             Url.Builder.crossOrigin
-                "https://ismb-schedule.luispedro.org" []
+                baseURL []
                 [ Url.Builder.string "speaker" spk ]
