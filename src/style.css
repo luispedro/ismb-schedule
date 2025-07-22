@@ -22,3 +22,22 @@
 .footer p {
     margin-bottom: 0px;
 }
+
+/* Input fields with clear button */
+.input-container {
+    position: relative;
+}
+
+.input-container input {
+    padding-right: 30px; /* Space for the clear button */
+}
+
+.input-container .clear-button {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+}
