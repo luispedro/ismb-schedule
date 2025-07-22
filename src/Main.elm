@@ -308,6 +308,13 @@ parseTime t =
             |> Maybe.withDefault 0
         )
 
+clearableInput : String -> (String -> msg) -> msg -> Html msg
+clearableInput val onInput clearMsg =
+    Html.div [ HtmlAttr.class "input-container" ]
+        [ Html.input [ HtmlAttr.type_ "text", HtmlAttr.value val, HE.onInput onInput ] []
+        , Html.span [ HtmlAttr.class "clear-button", HE.onClick clearMsg ] [ Html.text "\u00D7" ]
+        ]
+
 viewModel model = case model of
     Loading _ -> Html.text "Loading..."
     LoadFailed err -> Html.text ("Load error: " ++ err)
@@ -390,16 +397,16 @@ viewModel model = case model of
                                 else Html.p [] [ ]
                             ])
                     , Grid.col [ ]
-                        [Html.h4 [] [Html.text "Filter by speaker" ]
-                        ,Html.input [ HtmlAttr.type_ "text", HtmlAttr.value m.speaker, HE.onInput UpdateSpeakerFilter ] []
+                        [ Html.h4 [] [ Html.text "Filter by speaker" ]
+                        , clearableInput m.speaker UpdateSpeakerFilter (UpdateSpeakerFilter "")
                         ]
                     , Grid.col [ ]
-                        [Html.h4 [] [Html.text "Filter by title" ]
-                        ,Html.input [ HtmlAttr.type_ "text", HtmlAttr.value m.title, HE.onInput UpdateTitleFilter ] []
+                        [ Html.h4 [] [ Html.text "Filter by title" ]
+                        , clearableInput m.title UpdateTitleFilter (UpdateTitleFilter "")
                         ]
                     , Grid.col [ ]
-                        [Html.h4 [] [Html.text "Filter by abstract" ]
-                        ,Html.input [ HtmlAttr.type_ "text", HtmlAttr.value m.abstract, HE.onInput UpdateAbstractFilter ] []
+                        [ Html.h4 [] [ Html.text "Filter by abstract" ]
+                        , clearableInput m.abstract UpdateAbstractFilter (UpdateAbstractFilter "")
                         ]
                     ]
 
