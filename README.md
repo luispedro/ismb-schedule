@@ -2,7 +2,9 @@
 
 See live version at [https://ismb-schedule.luispedro.org/](https://ismb-schedule.luispedro.org/)
 
-This is a simple schedule for the ISMB 2025 conference. It is a static site
+This is a simple schedule for the ISMB 2025 conference. It is a static site.
+The site now includes Open Graph metadata so that links show an informative
+preview image on social networks.
 
 ## Code
 
