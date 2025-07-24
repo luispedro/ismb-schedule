@@ -46,7 +46,8 @@ KEYNOTE_SPEAKERS = {
         'Decoding cellular systems: From observational atlases to generative interventions': "Fabian Theis",
         'Building the future of AI-driven structure-based drug discovery': "Charlotte Deane",
         'Computational biology in the age of AI agents': "James Zou",
-        'Plus ça change, plus c\'est la même chose': "Amos Bairoch"
+        'Plus ça change, plus c\'est la même chose': "Amos Bairoch",
+        'A Conversation with Nobel Laureate David Baker: Inspiration from a Life in Science': "David Baker",
         }
 
 for ix in timetable.query('Track == "Distinguished Keynotes"').index:
