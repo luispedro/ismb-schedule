@@ -96,7 +96,7 @@ type alias FilterSet =
     , talks : List Talk
     }
 
-conferenceActive = True
+conferenceActive = False
 baseURL = "https://ismb-schedule.luispedro.org"
 
 initFilters : List Talk -> FilterSet
